@@ -1,15 +1,9 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
-using AngleSharp.Html;
-using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
-using GTUParser.Models;
+﻿using GTUParser.Models;
+using GTUParser.Remote;
 using GTUParser.Services;
-using System;
-using System.Collections.ObjectModel;
 using HtmlAgilityPack;
-using System.Net;
 
+GTUDbContext con = new GTUDbContext();
 DateTime start = DateTime.Now;
 
 List<String> tables = new List<string>();
@@ -33,7 +27,14 @@ foreach (string item in tables)
     Table table = parser.ParseTableFromSource();
     parsedTables.Add(table);
 }
+
+Console.WriteLine("ADDING IN DB . . .");
+con.Lectures.RemoveRange(con.Lectures);
+con.Tables.RemoveRange(con.Tables);
+con.Tables.AddRange(parsedTables);
+con.SaveChanges();
+
 DateTime end = DateTime.Now;
-Console.WriteLine($"{parsedTables.Count} TABLES PARSED");
+Console.WriteLine($"{parsedTables.Count} TABLES PARSED AND ADDED");
 Console.WriteLine((end-start).ToString());
 Console.ReadKey();

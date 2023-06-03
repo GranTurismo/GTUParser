@@ -1,7 +1,11 @@
-﻿namespace GTUParser.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GTUParser.Models
 {
     public class Lecture
     {
+        [Key]
+        public int Id { get; set; }
         public string LectureName { get; set; }
         public DayOfWeek LectureDay { get; set; }
         public ushort TimeId { get; set; }
@@ -12,6 +16,11 @@
         public bool IsOnline { get; set; }
         public string ZoomId { get; set; }
 
+        public Lecture()
+        {
+            
+        }
+        
         public Lecture(string lecName, ushort timeId, string teachName,
             ushort lectureDay, int duration, string location, bool isPractice)
         {
