@@ -6,7 +6,7 @@ using GTUParser.Models;
 
 namespace GTUParser.Services
 {
-    public class TableParser
+    public class TableParser:ITableParser
     {
         private string _htmlSource;
         private HtmlParser _parser;
@@ -35,7 +35,7 @@ namespace GTUParser.Services
             IHtmlCollection<IElement> hours = GetHours();
 
             IList<Lecture> lectures = new List<Lecture>();
-            ushort hourId = 0;
+            ushort hourId = 1;
             foreach (IElement hour in hours)
             {
                 IList<Lecture> lecs = GetLecturesOnHour(hour, hourId++);
@@ -81,17 +81,23 @@ namespace GTUParser.Services
                     teacherName = GetTeacherName(splittedName);
                     duration = GetDuration(element);
                     location = GetLocation(splittedName);
+                    lecs.Add(new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, false));
                 }
                 else
                 {
                     elements = element.QuerySelectorAll("td.detailed");
-                    teacherName = GetTeacherNameNonOnline(elements[2]);
-                    lecName = GetLectureNameNonOnline(elements[1]);
                     duration = 1;
-                    location = GetLocationNonOnline(elements.Last());
+                    int offset = element.QuerySelector("tr").Children.Length;
+                    int diff = offset;
+                    while (offset > 0)
+                    {
+                        lecName = GetLectureNameNonOnline(elements[^(offset+(2*diff))]);
+                        teacherName = GetTeacherNameNonOnline(elements[^(offset+diff)]);
+                        location = GetLocationNonOnline(elements[^(offset)]);
+                        offset--;
+                        lecs.Add(new Lecture(lecName,hourId,teacherName,(ushort)i,duration,location,true));
+                    }
                 }
-                Lecture lec = new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, isPractice);
-                lecs.Add(lec);
             }
 
             return lecs;
@@ -101,7 +107,7 @@ namespace GTUParser.Services
 
         private string GetLectureNameNonOnline(IElement element) => element.InnerHtml;
 
-        private string GetTeacherNameNonOnline(IElement element) => element.InnerHtml;
+        private string GetTeacherNameNonOnline(IElement element) => element.InnerHtml.Trim();
 
         private bool IsPracticeLecture(IElement element) =>
             element.FirstElementChild.TagName != "TABLE";

@@ -1,7 +1,9 @@
-﻿using GTUParser.Models;
+﻿using System.Text.Json.Serialization;
+using GTUParser.Models;
 using GTUParser.Remote;
 using GTUParser.Services;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 
 GTUDbContext con = new GTUDbContext();
 DateTime start = DateTime.Now;
@@ -23,10 +25,15 @@ IList<Table> parsedTables = new List<Table>();
 
 foreach (string item in tables)
 {
-    TableParser parser = new TableParser(item);
+    ITableParser parser = new TableParser(item);
     Table table = parser.ParseTableFromSource();
     parsedTables.Add(table);
 }
+
+/*StreamWriter writer = new StreamWriter(Directory.GetCurrentDirectory() + "/file.json");
+    writer.WriteLine(JsonConvert.SerializeObject(parsedTables));
+    writer.Flush();
+    writer.Close();*/
 
 Console.WriteLine("ADDING IN DB . . .");
 con.Lectures.RemoveRange(con.Lectures);

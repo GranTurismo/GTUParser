@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1700.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTUParser", "GTUParser\GTUParser.csproj", "{023432CC-DBC6-47B9-B3AA-E15DCBAA320D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentApi", "StudentApi\StudentApi.csproj", "{2CEC7A9E-E780-457B-B705-E0782655C0EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{023432CC-DBC6-47B9-B3AA-E15DCBAA320D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{023432CC-DBC6-47B9-B3AA-E15DCBAA320D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{023432CC-DBC6-47B9-B3AA-E15DCBAA320D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CEC7A9E-E780-457B-B705-E0782655C0EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CEC7A9E-E780-457B-B705-E0782655C0EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CEC7A9E-E780-457B-B705-E0782655C0EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CEC7A9E-E780-457B-B705-E0782655C0EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
