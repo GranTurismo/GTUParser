@@ -6,7 +6,7 @@ using GTUParser.Models;
 
 namespace GTUParser.Services
 {
-    public class TableParser:ITableParser
+    public class TableParser : ITableParser
     {
         private string _htmlSource;
         private HtmlParser _parser;
@@ -60,7 +60,8 @@ namespace GTUParser.Services
             return lectures;
         }
 
-        private IList<Lecture> GenerateLecturesFromLectureElements(IEnumerable<IElement> potentialLectures, ushort hourId)
+        private IList<Lecture> GenerateLecturesFromLectureElements(IEnumerable<IElement> potentialLectures,
+            ushort hourId)
         {
             int potLecCount = potentialLectures.Count();
             IList<Lecture> lecs = new List<Lecture>();
@@ -72,7 +73,7 @@ namespace GTUParser.Services
                     continue;
                 string[] splittedName = element.InnerHtml.Split("<br>");
                 bool isPractice = !IsPracticeLecture(element);
-                string lecName, teacherName,location;
+                string lecName, teacherName, location;
                 int duration;
                 IHtmlCollection<IElement> elements;
                 if (!isPractice)
@@ -91,11 +92,11 @@ namespace GTUParser.Services
                     int diff = offset;
                     while (offset > 0)
                     {
-                        lecName = GetLectureNameNonOnline(elements[^(offset+(2*diff))]);
-                        teacherName = GetTeacherNameNonOnline(elements[^(offset+diff)]);
+                        lecName = GetLectureNameNonOnline(elements[^(offset + (2 * diff))]);
+                        teacherName = GetTeacherNameNonOnline(elements[^(offset + diff)]);
                         location = GetLocationNonOnline(elements[^(offset)]);
                         offset--;
-                        lecs.Add(new Lecture(lecName,hourId,teacherName,(ushort)i,duration,location,true));
+                        lecs.Add(new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, true));
                     }
                 }
             }
@@ -105,9 +106,18 @@ namespace GTUParser.Services
 
         private string GetLocationNonOnline(IElement element) => element.InnerHtml;
 
-        private string GetLectureNameNonOnline(IElement element) => element.InnerHtml;
+        private string GetLectureNameNonOnline(IElement element) => NormalizeLectureName(element.InnerHtml);
 
-        private string GetTeacherNameNonOnline(IElement element) => element.InnerHtml.Trim();
+        private string NormalizeLectureName(string txt)
+        {
+            int startIndex = txt.IndexOf('(');
+            if (startIndex > 0)
+                txt = txt.Remove(startIndex, txt.IndexOf(')') - startIndex + 1);
+
+            return txt.Trim();
+        }
+
+    private string GetTeacherNameNonOnline(IElement element) => element.InnerHtml.Trim();
 
         private bool IsPracticeLecture(IElement element) =>
             element.FirstElementChild.TagName != "TABLE";
@@ -122,9 +132,9 @@ namespace GTUParser.Services
             return duration < 2 ? 1 : duration;
         }
 
-        private string GetTeacherName(string[] splittedName) => splittedName[1];
+        private string GetTeacherName(string[] splittedName) => splittedName[1].Trim();
 
-        private string GetLectureName(string[] splittedName) => splittedName[0];
+        private string GetLectureName(string[] splittedName) => NormalizeLectureName(splittedName[0]);
 
         private bool IsValidLecture(IElement o)
         {
