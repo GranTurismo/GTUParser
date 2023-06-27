@@ -72,17 +72,18 @@ namespace GTUParser.Services
                 if (!IsValidLecture(element))
                     continue;
                 string[] splittedName = element.InnerHtml.Split("<br>");
-                bool isPractice = !IsPracticeLecture(element);
+                bool isTabled = !IsTabled(element);
                 string lecName, teacherName, location;
                 int duration;
                 IHtmlCollection<IElement> elements;
-                if (!isPractice)
+                bool isPractice = !element.InnerHtml.Contains("ლექცია");
+                if (!isTabled)
                 {
                     lecName = GetLectureName(splittedName);
                     teacherName = GetTeacherName(splittedName);
                     duration = GetDuration(element);
                     location = GetLocation(splittedName);
-                    lecs.Add(new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, false));
+                    lecs.Add(new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, isPractice));
                 }
                 else
                 {
@@ -96,7 +97,7 @@ namespace GTUParser.Services
                         teacherName = GetTeacherNameNonOnline(elements[^(offset + diff)]);
                         location = GetLocationNonOnline(elements[^(offset)]);
                         offset--;
-                        lecs.Add(new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, true));
+                        lecs.Add(new Lecture(lecName, hourId, teacherName, (ushort)i, duration, location, isPractice));
                     }
                 }
             }
@@ -119,7 +120,7 @@ namespace GTUParser.Services
 
     private string GetTeacherNameNonOnline(IElement element) => element.InnerHtml.Trim();
 
-        private bool IsPracticeLecture(IElement element) =>
+    private bool IsTabled(IElement element) =>
             element.FirstElementChild.TagName != "TABLE";
 
         private string GetLocation(string[] splittedName) => splittedName.Last();
